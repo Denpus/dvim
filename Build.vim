@@ -85,11 +85,11 @@ function Dbuildrun(cmd)
     call s:run_window("dbuild target " . a:cmd)
 endfunction
 
-noremap <F4> :call Dbuildmin("clear")<cr>
-noremap <F6> :call Dbuild("targets")<cr>
+noremap <C-F4> :call Dbuildmin("clear")<cr>
+noremap <F8> :call Dbuild("targets")<cr>
 noremap <F7> :call Build_win_toggle()<cr>
-noremap <F8> :call Dbuild("load")<cr>
-noremap <S-F8> :call Dbuild("reset")<cr>
+noremap <S-F8> :call Dbuild("load")<cr>
+noremap <s-F1> :call Dbuild("reset")<cr>
 noremap <F10> :call Build_run("")<cr>
 
 command! -nargs=1 Build call Dbuildrun(<f-args>)
