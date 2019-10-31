@@ -11,7 +11,7 @@ let g:build_target = 'main'
 function! s:build_open_win()
     if exists("s:build_win")
         return
-    endif 
+    endif
 
     let s:build_win = bufnr("$")
 
@@ -40,7 +40,7 @@ function! s:run_window(data)
     " setlocal nomodifiable
 
     echo ":!" . a:data
-    "redir =>l:out 
+    "redir =>l:out
     "silent exec ":!" . a:data
     "redir end
     let l:out = system(a:data)
@@ -62,7 +62,7 @@ let mrg='main'
 let cstd = 99
 let g:build_type = 0
 
-function Build_check() 
+function Build_check()
     if g:build_type
         return
     endif
