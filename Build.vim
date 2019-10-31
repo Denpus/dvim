@@ -50,12 +50,14 @@ function! s:run_window(data)
     call s:build_open_win()
 endfunction
 
+
+
 function! s:cmd_run(data)
     echo ":!" . a:data
     "echo "echo -e '\033[31;1;4mHello\033[0m'"
     let l:out = system(a:data)
     "let l:out = substitute(l:out, "\n", " ", "")
-    "echo l:out
+    echo l:out[0:-2]
 endfunction
 
 let mrg='main'
@@ -85,12 +87,51 @@ function Dbuildrun(cmd)
     call s:run_window("dbuild target " . a:cmd)
 endfunction
 
-noremap <C-F4> :call Dbuildmin("clear")<cr>
-noremap <F8> :call Dbuild("targets")<cr>
+func Dres(channel, msg)
+    echo "res"
+
+    silent caddexpr a:msg
+
+    "call ch_close(channel)
+endfunc
+
+func Dbuildsrv(msg)
+    let path_root = expand('%:p:h')
+    let channel = ch_open('localhost:9999', {'mode': "nl", 'callback': "Dres"})
+
+    call s:build_open_win()
+    call ch_sendraw(channel, path_root . " " . a:msg . "0")
+endfunc
+
+func Dbuild_srv_min(msg)
+    let path_root = expand('%:p:h')
+    let channel = ch_open('localhost:9999', {'mode': "nl"})
+
+    echo ch_evalraw(channel, path_root . " " . a:msg . "0")
+
+    call ch_close(channel)
+endfunc
+
+
+function Dbuildsave()
+    let name = expand("%:t")
+
+    if name[0:0] == "@"
+        silent! w
+        call Dbuild_srv_min("-o" . name[1:-1])
+    else
+        :w
+    endif
+endfunction
+
+noremap <C-F4> :call Dbuild_srv_min("clear")<cr>
+noremap <F8> :call Dbuild_srv_min("targets")<cr>
 noremap <F7> :call Build_win_toggle()<cr>
-noremap <S-F8> :call Dbuild("load")<cr>
-noremap <s-F1> :call Dbuild("reset")<cr>
+noremap <S-F8> :call Dbuildsrv("load")<cr>
+noremap <s-F1> :call Dbuild_srv_min("reset")<cr>
 noremap <F10> :call Build_run("")<cr>
+noremap <F1> :call Dbuild_srv_min("load")<cr>
+
 
 command! -nargs=1 Build call Dbuildrun(<f-args>)
 
@@ -100,3 +141,7 @@ autocmd winenter * :call Build_check()
 autocmd vimenter * :call Build_check()
 autocmd tabenter * :call Build_check()
 
+au TextChanged * nested call Dbuildsave()
+au InsertLeave * nested call Dbuildsave()
+
+au BufReadPost @CMakeLists.txt set syntax=cmake
