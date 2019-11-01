@@ -124,7 +124,7 @@ function Dbuildsave()
     endif
 endfunction
 
-noremap <C-F4> :call Dbuild_srv_min("clear")<cr>
+noremap <s-F4> :call Dbuild_srv_min("clear")<cr>
 noremap <F8> :call Dbuild_srv_min("targets")<cr>
 noremap <F7> :call Build_win_toggle()<cr>
 noremap <S-F8> :call Dbuildsrv("load")<cr>
