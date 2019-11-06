@@ -1,9 +1,9 @@
 {
   "language": "vim",
   "name": "dvim",
-  "prefix": "",
+  "prefix": "dvim",
   "private": false,
-  "version": "0.2.0.0",
+  "version": "0.2.1.0",
   "license": "GPL-3.0",
   "description": "Dvim - control in VIM save file, auto save file and template (@), support cmake with targets",
   "homepage": "https://github.com/Denpus/dvim",

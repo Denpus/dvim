@@ -1,6 +1,6 @@
 "================================================
-" Script Name : @fscpath(false)
-" Link        : https://vimhelp.org/channel.txt.html
+"   File Name : @fscpath(false)
+"        Link : https://vimhelp.org/channel.txt.html
 "
 " Copyright (C) Denis Karabadjak <denkar@mail.ru>
 "=================================================
@@ -18,7 +18,7 @@ endfunction
 
 " Show/hide window
 
-func! Build_win_toggle()
+function s:build_win_toggle()
   if exists("s:build_win")
     cclose
     unlet s:build_win

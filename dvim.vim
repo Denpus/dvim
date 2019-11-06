@@ -1,7 +1,7 @@
 "======================================
 "    Plugin Name:  dvim
 "    Description:  Dvim - control in VIM save file, auto save file and template (@), support cmake with targets
-"        Version:  0.2.0.0
+"        Version:  0.2.1.0
 "         Author:  Denis karabadjak
 "
 " Join all files in big one file
@@ -11,6 +11,8 @@
 
 let g:build_dir = 'build'
 let g:build_target = 'main'
+let g:dvim_port = 9999
+let g:dvim_addr = "localhost"
 
 function! s:build_open_win()
     if exists("s:build_win")
@@ -25,7 +27,7 @@ endfunction
 
 " Show/hide window
 
-func! Build_win_toggle()
+function s:build_win_toggle()
   if exists("s:build_win")
     cclose
     unlet s:build_win
@@ -69,6 +71,24 @@ function Build_check()
     "let &l:makeprg='dbuild target'
 endfunction
 
+function! s:dvim(cmd)
+    if !s:dvim_net(a:cmd)
+        return
+    endif
+
+    call s:dvim_run(a:cmd)
+endfunction
+
+function! s:dvim_oneline(cmd)
+    let ncmd = "--oneline " . a:cmd
+
+    if !s:dvim_net_oneline(ncmd)
+        return
+    endif
+
+    call s:dvim_run_oneline(ncmd)
+endfunction
+
 function! s:cmd_run(data)
     echo ":!" . a:data
     "echo "echo -e '033[31;1;4mHello033[0m'"
@@ -77,73 +97,103 @@ function! s:cmd_run(data)
     echo l:out[0:-2]
 endfunction
 
-function Dbuildmin(cmd)
-    call s:cmd_run("dbuild " . a:cmd)
+function s:dvim_run_oneline(cmd)
+    call s:cmd_run("dff " . a:cmd)
 endfunction
 
-function Dbuild(cmd)
-    call s:run_window("dbuild " . a:cmd)
+function s:dvim_run(cmd)
+    call s:run_window("dff " . a:cmd)
 endfunction
 
 function Dbuildrun(cmd)
-    call s:run_window("dbuild target " . a:cmd)
+    call s:run_window("dffs target " . a:cmd)
 endfunction
 
-func Dres(channel, msg)
+function Gdvim_net_res(channel, msg)
     echo "res"
 
     silent caddexpr a:msg
 
     "call ch_close(channel)
-endfunc
+endfunction
 
-func Dbuildsrv(msg)
+function s:dvim_net_open()
+    let address = g:dvim_addr . ':' . g:dvim_port
+    let channel = ch_open(address, {'mode': "nl", 'callback': "Gdvim_net_res"})
+
+    if ch_status(channel) == "fail"
+        "echo "error open channel"
+    endif
+
+    return channel
+endfunction
+
+function s:dvim_net(msg)
+    let channel = s:dvim_net_open()
+
+    if ch_status(channel) == "fail"
+        return 1
+    endif
+
     let path_root = expand('%:p:h')
-    let channel = ch_open('localhost:9999', {'mode': "nl", 'callback': "Dres"})
 
     call s:build_open_win()
     call ch_sendraw(channel, path_root . " " . a:msg . "0")
-endfunc
 
-func Dbuild_srv_min(msg)
+    return 0
+endfunction
+
+function s:dvim_net_oneline(msg)
+    let channel = s:dvim_net_open()
+
+    if ch_status(channel) == "fail"
+        return 1
+    endif
+
     let path_root = expand('%:p:h')
-    let channel = ch_open('localhost:9999', {'mode': "nl"})
 
     echo ch_evalraw(channel, path_root . " " . a:msg . "0")
 
     call ch_close(channel)
-endfunc
 
-function Dbuildsave()
+    return 0
+endfunction
+
+function s:dvim_save()
     let name = expand("%:t")
 
     if name[0:0] == "@"
         silent! w
-        call Dbuild_srv_min("-o" . name[1:-1])
+        call s:dvim_oneline("-o" . name[1:-1])
     else
         :w
     endif
 endfunction
 
-noremap <s-F4> :call Dbuild_srv_min("clear")<cr>
-noremap <F8> :call Dbuild_srv_min("targets")<cr>
-noremap <F7> :call Build_win_toggle()<cr>
-noremap <S-F8> :call Dbuildsrv("load")<cr>
-noremap <s-F1> :call Dbuild_srv_min("reset")<cr>
-noremap <F10> :call Build_run("")<cr>
-noremap <F1> :call Dbuild_srv_min("load")<cr>
+cnoreabbrev dw :call s:dvim_save()
 
+noremap <s-F4> :call s:dvim_oneline("clear")<cr>
+noremap <F8> :call s:dvim_oneline("targets")<cr>
+noremap <F7> :call s:build_win_toggle()<cr>
+noremap <S-F8> :call s:dvim("load")<cr>
+noremap <s-F1> :call s:dvim_oneline("reset")<cr>
+noremap <F10> :call Build_run("")<cr>
+noremap <F1> :call s:dvim_oneline("load")<cr>
 
 command! -nargs=1 Build call Dbuildrun(<f-args>)
+command! -nargs=1 Dvim call s:dvim(<f-args>)
+command! -nargs=1 Dv call s:dvim_oneline(<f-args>)
 
 cnoreabbrev bload :call Dbuild("load")
 cnoreabbrev breset :call Dbuild("reset")
-autocmd winenter * :call Build_check()
-autocmd vimenter * :call Build_check()
-autocmd tabenter * :call Build_check()
+cnoreabbrev dw :call s:dvim_save()
 
-au TextChanged * nested call Dbuildsave()
-au InsertLeave * nested call Dbuildsave()
-
-au BufReadPost @CMakeLists.txt set syntax=cmake
+autocmd WinEnter * :call Build_check()
+autocmd VimEnter * :call Build_check()
+autocmd TabEnter * :call Build_check()
+" Save changed
+autocmd TextChanged * nested call s:dvim_save()
+autocmd InsertLeave * nested call s:dvim_save()
+" Default syntax for file
+autocmd BufReadPost @CMakeLists.txt set syntax=cmake
 

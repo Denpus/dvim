@@ -9,10 +9,11 @@
 " Copyright (C) Denis Karabadjak <denkar>
 "======================================
 
-@include("src/variables.vim")
-@include("src/window.vim")
-@include("src/init.vim")
-@include("src/run.vim")
-@include("src/socket.vim")
-@include("src/save.vim")
-@include("src/autocmd.vim")
+@include("src/variables.vim" "let g:")
+@include("src/window.vim" "function")
+@include("src/init.vim" "let mrg")
+@include("src/run.vim" "function")
+@include("src/cmd.vim" "function")
+@include("src/socket.vim" "function")
+@include("src/save.vim" "function")
+@include("src/autocmd.vim" "noremap")

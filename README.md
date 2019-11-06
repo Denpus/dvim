@@ -1,4 +1,4 @@
-dvim v0.2.0.0
+dvim v0.2.1.0
 ====================================
 Dvim - control in VIM save file, auto save file and template (@), support cmake with targets
 

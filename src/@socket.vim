@@ -1,31 +1,58 @@
 "================================================
-" Script Name : @fscpath(false)
-" Link        : https://vimhelp.org/channel.txt.html
+"    Script Name:  @name
+"      File Name:  @fscpath(false)
+"         Author:  Denis karabadjak
+"           Link:  https://vimhelp.org/channel.txt.html
 "
 " Copyright (C) Denis Karabadjak <denkar@mail.ru>
 "=================================================
 
-func Dres(channel, msg)
+function G@prefix\_net_res(channel, msg)
     echo "res"
 
     silent caddexpr a:msg
 
     "call ch_close(channel)
-endfunc
+endfunction
 
-func Dbuildsrv(msg)
+function s:@prefix\_net_open()
+    let address = g:@prefix\_addr . ':' . g:@prefix\_port
+    let channel = ch_open(address, {'mode': "nl", 'callback': "G@prefix\_net_res"})
+
+    if ch_status(channel) == "fail"
+        "echo "error open channel"
+    endif
+
+    return channel
+endfunction
+
+function s:@prefix\_net(msg)
+    let channel = s:@prefix\_net_open()
+
+    if ch_status(channel) == "fail"
+        return 1
+    endif
+
     let path_root = expand('%:p:h')
-    let channel = ch_open('localhost:9999', {'mode': "nl", 'callback': "Dres"})
 
     call s:build_open_win()
     call ch_sendraw(channel, path_root . " " . a:msg . "0")
-endfunc
 
-func Dbuild_srv_min(msg)
+    return 0
+endfunction
+
+function s:@prefix\_net_oneline(msg)
+    let channel = s:@prefix\_net_open()
+
+    if ch_status(channel) == "fail"
+        return 1
+    endif
+
     let path_root = expand('%:p:h')
-    let channel = ch_open('localhost:9999', {'mode': "nl"})
 
     echo ch_evalraw(channel, path_root . " " . a:msg . "0")
 
     call ch_close(channel)
-endfunc
+
+    return 0
+endfunction

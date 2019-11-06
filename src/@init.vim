@@ -1,7 +1,7 @@
 "================================================
-" Script Name : @fscpath(false)
-" Link        : https://www.reddit.com/r/vim/comments/2bkvii/setlocal_makeprggcc_o_pr_p/
-
+"   File Name : @fscpath(false)
+"        Link : https://www.reddit.com/r/vim/comments/2bkvii/setlocal_makeprggcc_o_pr_p/
+"
 " Copyright (C) Denis Karabadjak <denkar@mail.ru>
 "=================================================
 

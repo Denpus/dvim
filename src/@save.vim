@@ -1,16 +1,18 @@
 "================================================
-" Script Name:  @fscpath(false)
+" File Name:  @fscpath(false)
 "
 " Copyright (C) Denis Karabadjak <denkar@mail.ru>
 "=================================================
 
-function Dbuildsave()
+function s:@prefix\_save()
     let name = expand("%:t")
 
     if name[0:0] == "\@"
         silent! w
-        call Dbuild_srv_min("-o" . name[1:-1])
+        call s:@prefix\_oneline("-o" . name[1:-1])
     else
         :w
     endif
 endfunction
+
+cnoreabbrev dw :call s:@prefix\_save()
