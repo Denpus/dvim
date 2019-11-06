@@ -1,8 +1,12 @@
 "======================================
-"    Script Name:  dvim-build
-"    Plugin Name:  DVimbBuild
-"        Version:  0.1.12
-" @link https://www.reddit.com/r/vim/comments/2bkvii/setlocal_makeprggcc_o_pr_p/
+"    Plugin Name:  dvim
+"    Description:  Dvim - control in VIM save file, auto save file and template (@), support cmake with targets
+"        Version:  0.2.0.0
+"         Author:  Denis karabadjak
+"
+" Join all files in big one file
+"
+" Copyright (C) Denis Karabadjak <denkar>
 "======================================
 
 let g:build_dir = 'build'
@@ -50,16 +54,6 @@ function! s:run_window(data)
     call s:build_open_win()
 endfunction
 
-
-
-function! s:cmd_run(data)
-    echo ":!" . a:data
-    "echo "echo -e '\033[31;1;4mHello\033[0m'"
-    let l:out = system(a:data)
-    "let l:out = substitute(l:out, "\n", " ", "")
-    echo l:out[0:-2]
-endfunction
-
 let mrg='main'
 let cstd = 99
 let g:build_type = 0
@@ -73,6 +67,14 @@ function Build_check()
     "set makeprg=dbuild
     "au FileType c set makeprg=gcc\ -g\ %\ -o\ %<
     "let &l:makeprg='dbuild target'
+endfunction
+
+function! s:cmd_run(data)
+    echo ":!" . a:data
+    "echo "echo -e '033[31;1;4mHello033[0m'"
+    let l:out = system(a:data)
+    "let l:out = substitute(l:out, "n", " ", "")
+    echo l:out[0:-2]
 endfunction
 
 function Dbuildmin(cmd)
@@ -112,7 +114,6 @@ func Dbuild_srv_min(msg)
     call ch_close(channel)
 endfunc
 
-
 function Dbuildsave()
     let name = expand("%:t")
 
@@ -145,3 +146,4 @@ au TextChanged * nested call Dbuildsave()
 au InsertLeave * nested call Dbuildsave()
 
 au BufReadPost @CMakeLists.txt set syntax=cmake
+

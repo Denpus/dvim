@@ -1,0 +1,29 @@
+{
+  "language": "vim",
+  "name": "dvim",
+  "prefix": "",
+  "private": false,
+  "version": "0.2.0.0",
+  "license": "GPL-3.0",
+  "description": "Dvim - control in VIM save file, auto save file and template (@), support cmake with targets",
+  "homepage": "https://github.com/Denpus/dvim",
+  "features": {
+    "1": "Support auto save file",
+    "2": "Auto create/save template file"
+  },
+  "dependencies": {
+  },
+  "files": [
+    "src/@autocmd.vim",
+    "src/@run.vim",
+    "src/@save.vim",
+    "src/@autocmd.vim"
+  ],
+  "keywords": [
+    "vim",
+    "autosave",
+    "build",
+    "cmake",
+    "targets"
+  ]
+}

@@ -1,0 +1,6 @@
+# Dependencies list
+@for(dependencies)[submodule "lib/@key"]
+	path = lib/@key
+	url = git\@@strrchr(. "#")\.git
+	branch = dev
+@end

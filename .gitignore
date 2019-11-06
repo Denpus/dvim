@@ -1,0 +1,15 @@
+# JS
+node_modules/
+package-lock.json
+yarn.lock
+yarn-error.log
+report.*.json
+# build
+build
+cmake-build-release
+cmake-build-debug
+# other
+backup
+.*
+*.swp
+tags
